@@ -66,12 +66,48 @@
       color: #ddd;
     }
 
+    /* Styles for light and dark mode */
+    body {
+        font-family: Arial, sans-serif;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Light Mode (Default) */
+    .light {
+        background-color: blacke;
+        color: black;
+    }
+
+    /* Dark Mode */
+    .dark {
+        background-color: rgb(0, 0, 0);
+        color: white;
+    }
+
+    /* Button Styling */
+    button {
+        margin: 20px;
+        padding: 10px 20px;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+        background-color: #007BFF;
+        color: white;
+        font-size: 16px;
+    }
+
     #timeline .overview-axis-mirror .tick text{
       font-size: 0px !important;
     }
-
+    #timeline{
+      margin-left: 50px;
+    }
     #timelineZoomOut {
       fill: blue;
+    }
+    .lightmode-bg{
+      background-color:gray;
+      color: white;
     }
     .axis .tick text {
       font-family: sans-serif;
@@ -89,7 +125,7 @@
 
     body {
       text-align: center;
-      background-color: white;
+      background: linear-gradient(to bottom, #fce4ec, #f5f5f5);
     }
     #jsonInput {
       width: 500px;
@@ -118,6 +154,10 @@
       padding: 6px 15px;
       font-size: 12px;
       border-radius: 6px;
+    }
+    .darkmode-bg{
+      background-color: white;
+      color: black;
     }
     .dropdown{
       width: 100px;
@@ -267,45 +307,79 @@
         .collapseAll();
       timeline();
     }
-  })
+  });
   </script>
 </head>
 <body>
-  <div id="timeline-wrapper">
-    <h3>clinical timeline</h3>
-    <div class="dropdown" id="config-div">
-        <button class="btn btn-default dropdown-toggle" type="button" id="configDropdownBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-          Config
-          <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu" id="config-dropdown">
-          <!-- dynamically populated via js/plugins/configButton.plugins -->
-        </ul>
+  <div id="main" class="light">
+  <div id="timeline-wrapper" style="display: flex; flex-direction: row; align-items: flex-start;">
+    <!-- Left Side: Graph and Controls -->
+    <div style="flex: 3; margin-right: 20px;">
+      <h3>clinical timeline</h3>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="dropdown" id="config-div">
+          <button class="btn btn-default dropdown-toggle" type="button" id="configDropdownBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            Config
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" id="config-dropdown">
+            <!-- dynamically populated via js/plugins/configButton.plugins -->
+          </ul>
+        </div>
+        
+        <div class="dropdown" id="export-div">
+          <button class="btn btn-default dropdown-toggle" id="export-button" type="button" data-toggle="dropdown">Export As
+            <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <script type="text/javascript">
+              var exporter = (new clinicalTimelineExporter()).run(null, {exportDivId : "#export-div", timelineDiv : "#timeline"});
+            </script>
+            <li><a href='javascript:exporter.generateSVG()'>SVG Image</a></li>
+            <li><a href='javascript:exporter.generatePNG(true)'>PNG Image</a></li>
+            <li><a href='javascript:exporter.generatePDF()'>PDF Document</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div id="timeline" style="position: relative; margin-bottom: 20px; border: 1px solid #ddd; height: 300px;">
+        <!-- Timeline SVG content will be dynamically generated here -->
+      </div>
+     
+      <!-- Scale at the bottom -->
+      <div style="text-align: center; margin-top: 10px;">
+        <div id="timeline-scale">
+          <span>-11m</span> <span>-10m</span> <span>-9m</span> <span>-8m</span> <span>-7m</span> <span>-6m</span> <span>-5m</span> <span>-4m</span> <span>-3m</span> <span>-2m</span> <span>-1m</span> <span>0</span>
+        </div>
+      </div>
     </div>
-    <div class="dropdown" id="export-div">
-      <button class="btn btn-default dropdown-toggle" id="export-button" type="button" data-toggle="dropdown">Export As
-      <span class="caret"></span></button>
-      <ul class="dropdown-menu">
-        <script type="text/javascript">
-          var exporter = (new clinicalTimelineExporter()).run(null, {exportDivId : "#export-div", timelineDiv : "#timeline"});
-        </script>
-        <li><a href='javascript:exporter.generateSVG()'>SVG Image</a></li>
-        <li><a href='javascript:exporter.generatePNG(true)'>PNG Image</a></li>
-        <li><a href='javascript:exporter.generatePDF()'>PDF Document</a></li>
-      </ul>
+
+    <!-- Right Side: Parse JSON -->
+    <div style="flex: 1; display: flex;flex-direction: column; align-items: flex-start;margin-left: 10px;">
+      <h4 class="data-control">Data Input</h4>
+      <button id="parseJson" class="btn btn-primary data-control" style="margin-bottom: 10px;">Parse JSON</button>
+      <textarea id="jsonInput" class="form-control data-control" style="width: 400px; height: 600px;margin-left: 30px; margin-right:50px !important;">
+      </textarea>
     </div>
-    <div id="timeline">
-    </div>
-    <span id="tooltip-controller">
-      <a>Hide tooltips on vertical-line</a>
-    </span>
-    <h4 class="data-control">data</h4>
-    <button id="parseJson" class="btn btn-primary data-control">Parse JSON</button><br />
-    <textarea id="jsonInput" class="form-control data-control">
-    </textarea>
-    <!-- canvas and div used for redrawing the timeline SVG required for exporting -->
-    <canvas id="canvas" width="800" height="268" style="display:none"></canvas>
-    <div id="png-container" style="display:none"></div>
+    <button id="theme-toggle" class="lightmode-bg" onclick="Toggle()">Dark Mode</button>
   </div>
+</div>
 </body>
+<script>
+  function Toggle(){
+    const toggleButton = document.getElementById('theme-toggle');
+    let change = document.getElementById('main');
+    if(change.classList.contains('dark')){
+      
+      toggleButton.classList.replace('darkmode-bg','lightmode-bg');
+      change.classList.replace('dark', 'light') 
+   toggleButton.textContent='Dark Mode'
+  }
+  else{
+    change.classList.replace('light', 'dark');
+    toggleButton.classList.replace('lightmode-bg','darkmode-bg')
+    toggleButton.textContent='Light mode'
+  } 
+
+  }
+</script>
 </html>

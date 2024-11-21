@@ -108,7 +108,7 @@ clinicalTimelineOverviewAxis.prototype.run = function(timeline, spec) {
       //handle overview rectangle if the original-timeline is dragged
       if(chart.scrolledX()){
         var zoomedBeginTick = xScaleOverviewZoomed(chart.scrolledX()); 
-        d3.select(divId+" .overview-rectangle").attr("x", zoomedBeginTick);
+        d3.select(divId+" .overview-rectangle ").attr("x", zoomedBeginTick);
         timeline.overviewX(zoomedBeginTick);
       }
     });

@@ -1275,3 +1275,5 @@ var clinicalTimeline = (function(){
 /* start-test-code-not-included-in-build */
 module.exports = clinicalTimeline;
 /* end-test-code-not-included-in-build */
+// script.js
+
